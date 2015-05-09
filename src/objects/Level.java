@@ -53,6 +53,7 @@ public class Level {
 	private int mapWidth; // The map array width.
 	private int mapHeight; // The map array height.
 	private int[][] map; // The map array. (height, width)
+	private boolean[][] updateTiles;
 	private int tileSize; // The tileSize. Preferably 32.
 	private ArrayList<Rectangle2D.Double> barrierCollisionBoxes; // The
 																	// arraylist
@@ -212,7 +213,14 @@ public class Level {
 			this.mapHeight = Integer.parseInt(imageReader.readLine());
 
 			this.map = new int[this.mapHeight][this.mapWidth];
-
+			this.updateTiles = new boolean[this.mapHeight][this.mapWidth];
+			for(int i = 0; i < this.mapHeight; i++)
+			{
+				for(int x = 0; x < this.mapWidth; x++)
+				{
+					updateTiles[x][i] = true;
+				}
+			}
 			for (int r = 0; r < this.map.length; r++) {
 				// Get line of numbers and spaces.
 				currentLine = imageReader.readLine();
@@ -333,8 +341,12 @@ public class Level {
 		Graphics2D g = img.createGraphics();
 		for (int r = 0; r < this.map.length; r++) {
 			for (int c = 0; c < this.map[r].length; c++) {
-				currentPosition = this.map[r][c];
-				drawTileImage(currentPosition, r, c, g);
+				if(this.updateTiles[r][c] == true)
+				{
+					this.updateTiles[r][c] = false;
+					currentPosition = this.map[r][c];
+					drawTileImage(currentPosition, r, c, g);
+				}
 			}
 		}
 		g.dispose();
@@ -383,6 +395,7 @@ public class Level {
 	 *            the tileID number to update to.
 	 */
 	public void updateTile(int x, int y, int tileID) {
+		this.updateTiles[x][y] = true;
 		this.map[x][y] = tileID;
 	}
 
